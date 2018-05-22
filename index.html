@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no"> 
+	<title> 街区地图 </title>
+	<link rel="stylesheet" href="css/style.css">
+	<!--引入Font Awesome-->
+	<link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.css">
+
+	<!-- 导入地图样式 -->
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+</head>
+<body>
+<section class="container">
+	<!--侧边栏-->
+	<nav class="nav-left">
+		<h3>Welcome to Peking!</h3>	
+		<!--搜索框 -->
+		<section id="search">
+			<input data-bind="textInput: placeInput" type="text" class="search-text" placeholder="Search for...">
+			<button class="search-btn" type="button">筛选</button>
+		</section>		
+	    <!--选取的地方列表-->
+		<div id="place">
+			<ul data-bind="foreach: placeList">
+				<!-- 绑定的是Place对象-->
+				<li data-bind="text: name, click: showDetail"></li>
+			</ul>
+		</div>
+	</nav>
+	<!--地图展示区-->
+	<section class="show-map">
+		<!-- 展示/隐藏侧边栏按钮-->
+		<header class="nav-top">
+			<a id="slideNav" href="javascipt:void(0)">
+				<i class="fa fa-dedent"></i>
+			</a>
+		</header>
+		<!--引入的高德地图-->
+		<section id="map"></section>
+	</section>
+</section>
+<!-- Jquery 引入 -->
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.min.js"></script>
+<!-- knocjJs 引入 -->
+<script src="js/lib/knockout-3.4.2.js"></script>
+<!-- 异步加载 JavaScript API。-->
+<script src="http://webapi.amap.com/maps?v=1.3&key=2ded72af71bae6d5f84dbdfff693ee08&callback=init"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

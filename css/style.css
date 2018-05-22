@@ -1,0 +1,65 @@
+*,
+*:after,
+*:before: {
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+body {
+    font-weight: 300;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.nav-left {
+    width: 340px;
+    height: 100%;
+    padding: 10px 10px 10px 20px;
+}
+.container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#map {
+    height: 100%;
+    position: absolute;
+    right: 30px;
+    left: 500px;
+    top: 30px;
+}
+
+#nav-top {
+	float: left;
+}
+
+a {
+	font-size: 30px;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    margin-top: 15px;
+    font-size: 20px;
+}
+/*当缩小到一定尺寸时，隐藏list*/
+
+@media only screen and (max-width: 500px) {
+	.nav-left {
+		visibility: hidden;
+	}
+}

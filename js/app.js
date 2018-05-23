@@ -30,65 +30,82 @@ var initialPlaces =[
         "attribute": "hospital"            
     }];
 
-var lastMarker;
-// var res = initialPlaces.filter(function(lot) {
-//     return lot.name.indexOf("医院") >= 0;
-// });
 
-// //创建Place对象
-// var Place = function(data) {
-//     this.name = data.name;
-//     this.showDetail = function() {
-//         //console.log(lastMarker);
-//         //如果地图上已有place显示了infoWindow，关掉
-//         // if (lastMarker){
-//         // 	console.log("存在");
-//         //  	infoWindow.close(map, lastMarker.getPosition());
-//         //  }
-//         //filter() 方法创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素
-//         var marker = allMarker.filter((el) => {return el.content == this.name})[0];
-//         lastMarker  = marker;
-//         infoWindow.open(map, marker.getPosition());
-//         infoWindow.setContent(marker.content + " " + today + " " + wenduType + " " +wenduHigh + " " + wenduLow);  
-//     };
-// };
+//创建Place对象
+var Place = function(data) {
+    this.name = data.name;
+    this.location = data.location;
+
+};
 
 
 //绑定数据
 var viewModel = function() {
     var self = this;
-
+    //输入框的监控
     self.placeInput = ko.observable('');
-    self.places = ko.observableArray(initialPlaces);    
+    //初始化监控数组places
+    self.places = ko.observableArray([]); 
 
+    initialPlaces.forEach(function(placeData) {
+        var place = new Place(placeData);
+        var name = placeData.name;
+        var location = placeData.location;
+
+        var marker = new AMap.Marker({
+            position: location,
+            title: name,
+            map: map,
+            animation: 'AMAP_ANIMATION_DROP'
+        });
+
+        marker.on("click", markerClick);
+        place.marker = marker;
+        self.places.push(place);
+
+
+    });
+
+    //列表筛选
     self.placeList = ko.computed(function() {
+
+    // var arr = [1, 2, 3, 4];
+    // var newArr = ko.utils.arrayFilter(arr, function(el, index) {
+    //     return el < 5;
+    // });
+    // console.log(newArr);  
         return ko.utils.arrayFilter(self.places(), function(lot) {
-            console.log(lot.name);
+            //console.log(lot);
             if(lot.name.indexOf(self.placeInput()) >= 0){
-                console.log("搜索出来了");
-                return;
+                //console.log(lot.marker);
+                lot.marker.show();
+                return true;
             } else {
-                console.log("唔");
+                lot.marker.hide();
+                return false;
             }
         });
-    })
-    var arr = [1, 2, 3, 4];
-    var newArr = ko.utils.arrayFilter(arr, function(el, index) {
-        return el < 5;
     });
-    console.log(newArr);
-    this.showDetail = function() {
+
+
+
+    this.placeClick = function() {
         //console.log(lastMarker);
-        //如果地图上已有place显示了infoWindow，关掉
-        // if (lastMarker){
-        //  console.log("存在");
-        //      infoWindow.close(map, lastMarker.getPosition());
-        //  }
+         if (lastMarker){
+             infoWindow.close(map, lastMarker.getPosition());
+          }
         //filter() 方法创建一个新的数组，新数组中的元素是通过检查指定数组中符合条件的所有元素
         var marker = allMarker.filter((el) => {return el.content == this.name})[0];
-        lastMarker  = marker;
+       // marker.show();
+        lastMarker = marker;
         infoWindow.open(map, marker.getPosition());
         infoWindow.setContent(marker.content + " " + today + " " + wenduType + " " +wenduHigh + " " + wenduLow);  
+
+        // var allMarkerCopy = allMarker;
+        // allMarkerCopy.splice(allMarker.indexOf(marker), 1);
+        // for(var i = 0; i < allMarkerCopy.length; i++){
+        //     allMarkerCopy[i].hide();
+        // }
     };
 };
 ko.applyBindings(new viewModel());
@@ -96,8 +113,8 @@ ko.applyBindings(new viewModel());
 //初始化地图
 var map;
 var infoWindow;
-var marker;
 var allMarker = [];
+var lastMarker;
 
 function init(){
     // 创建地图对象
@@ -114,7 +131,7 @@ function init(){
     //添加标记
     for(var i = 0; i < initialPlaces.length; i += 1) {
 
-        marker = new AMap.Marker({
+        var marker = new AMap.Marker({
             position: initialPlaces[i].location,
             title: initialPlaces[i].name,
             map: map,
@@ -133,7 +150,7 @@ var wenduHigh;
 var wenduLow;
 var wenduType;
 var today;
-
+//调用天气api
 fetch('https://www.apiopen.top/weatherApi?city=北京')
 .then(function(response){
         if(response.status!==200){
@@ -154,13 +171,13 @@ fetch('https://www.apiopen.top/weatherApi?city=北京')
 
 //点击marker出现信息窗口函数
 function markerClick(e) {
-	// lastMarker = e.target;
- //    //console.log(e.target.content);
+	lastMarker = e.target;
+     //console.log(e.target.content);
 
-	// if (lastMarker)
-	// 	infoWindow.close(map, lastMarker.getPosition());
+	if (lastMarker)
+	 	infoWindow.close(map, lastMarker.getPosition());
 
-    infoWindow.setContent(e.target.content + " " + today + " " + wenduType + " " +wenduHigh + " " + wenduLow);
-    infoWindow.open(map, e.target.getPosition());   
+    infoWindow.setContent(lastMarker.content + " " + today + " " + wenduType + " " +wenduHigh + " " + wenduLow);
+    infoWindow.open(map, lastMarker.getPosition());   
 }
 

@@ -47,25 +47,30 @@ var viewModel = function() {
     //初始化监控数组places
     self.places = ko.observableArray([]); 
 
-    initialPlaces.forEach(function(placeData) {
-        var place = new Place(placeData);
-        var name = placeData.name;
-        var location = placeData.location;
+    // initialPlaces.forEach(function(placeData) {
+    //     var place = new Place(placeData);
+    //     var name = placeData.name;
+    //     var location = placeData.location;
 
-        var marker = new AMap.Marker({
-            position: location,
-            title: name,
-            map: map,
-            animation: 'AMAP_ANIMATION_DROP'
-        });
+    //     var marker = new AMap.Marker({
+    //         position: location,
+    //         title: name,
+    //         map: map,
+    //         animation: 'AMAP_ANIMATION_DROP'
+    //     });
 
-        marker.on("click", markerClick);
+    //     marker.on("click", markerClick);
+    //     place.marker = marker;
+    //     self.places.push(place);
+
+
+    // });
+    allMarker.forEach(function(marker) {
+        var place = new Place(marker);
         place.marker = marker;
+        console.log(place);
         self.places.push(place);
-
-
     });
-
     //列表筛选
     self.placeList = ko.computed(function() {
 
@@ -78,7 +83,7 @@ var viewModel = function() {
             //console.log(lot);
             if(lot.name.indexOf(self.placeInput()) >= 0){
                 //console.log(lot.marker);
-                lot.marker.show();
+                lot.marker.show();   
                 return true;
             } else {
                 lot.marker.hide();
@@ -108,7 +113,9 @@ var viewModel = function() {
         // }
     };
 };
-ko.applyBindings(new viewModel());
+//如果在此处绑定viewmodel，则先绑定再调用init 函数就会出现viewmodle 中map 是空的情况
+//且创建了两次marker，应共用一个marker 可以起到联动的效果
+//ko.applyBindings(new viewModel());
 
 //初始化地图
 var map;
@@ -137,6 +144,8 @@ function init(){
             map: map,
             animation: 'AMAP_ANIMATION_DROP'
         });
+        marker.name = initialPlaces[i].name;
+        marker.location = initialPlaces[i].location;
 
         allMarker.push(marker);
         //点击marker出现信息窗口
@@ -144,6 +153,7 @@ function init(){
         marker.on("click", markerClick);
     }
     map.setFitView();
+    ko.applyBindings(new viewModel());
 }
 
 var wenduHigh;

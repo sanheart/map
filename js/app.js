@@ -113,13 +113,17 @@ var viewModel = function() {
         " " +
         wenduLow
     );
-    
-    // var allMarkerCopy = allMarker;
-    // allMarkerCopy.splice(allMarker.indexOf(marker), 1);
-    // for(var i = 0; i < allMarkerCopy.length; i++){
-    //     allMarkerCopy[i].hide();
-    // }
   };
+
+  //点击汉堡包隐藏/显示菜单
+  self.menuHide = ko.observable(true);
+  self.menuClass = ko.pureComputed(function() {
+    return self.menuHide() ? "toggled" : "";
+  });
+
+  self.menuClick = function() {
+    self.menuHide(!self.menuHide());
+  }
 };
 //如果在此处绑定viewmodel，则先绑定再调用init 函数就会出现viewmodle 中map 是空的情况
 //且创建了两次marker，应共用一个marker 可以起到联动的效果
